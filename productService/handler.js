@@ -99,9 +99,31 @@ const serialize = (object) => {
   return JSON.stringify(object, null, 2)
 };
 
+const successHandler = (result) => {
+  return formatResponse(serialize(result));
+}
+
 module.exports.getProductsList = async (event) => {
   try {
     return formatResponse(serialize(productList))
+  } catch(error) {
+    return formatError(error)
+  }
+};
+
+module.exports.getProductsById = async (event) => {
+  try {
+    const { productId } = event.pathParameters || {};
+
+    const product = productList.find((list) => list.id === productId);
+
+    if (!product) {
+      return successHandler({
+        message: "there is no productId found",
+      });
+    }
+
+    return successHandler(product);
   } catch(error) {
     return formatError(error)
   }
