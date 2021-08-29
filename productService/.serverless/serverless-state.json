@@ -83,10 +83,10 @@
               }
             }
           },
-          "HelloLogGroup": {
+          "GetProductsListLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/productservice-dev-hello"
+              "LogGroupName": "/aws/lambda/productservice-dev-getProductsList"
             }
           },
           "IamRoleLambdaExecution": {
@@ -166,18 +166,18 @@
               }
             }
           },
-          "HelloLambdaFunction": {
+          "GetProductsListLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/productservice/dev/1630253009147-2021-08-29T16:03:29.147Z/productservice.zip"
+                "S3Key": "serverless/productservice/dev/1630265990331-2021-08-29T19:39:50.331Z/productservice.zip"
               },
-              "Handler": "handler.hello",
+              "Handler": "handler.getProductsList",
               "Runtime": "nodejs12.x",
-              "FunctionName": "productservice-dev-hello",
+              "FunctionName": "productservice-dev-getProductsList",
               "MemorySize": 1024,
               "Timeout": 6,
               "Role": {
@@ -188,17 +188,17 @@
               }
             },
             "DependsOn": [
-              "HelloLogGroup"
+              "GetProductsListLogGroup"
             ]
           },
-          "HelloLambdaVersionfP8TlW0cbqfU6QNoFTvgGY1x9Xcaajb0f7ir8hdg6ZY": {
+          "GetProductsListLambdaVersionWVfC98F2o16LTA8oggbBhhWcHsXIZGNKk0N67Rj5H8g": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
-                "Ref": "HelloLambdaFunction"
+                "Ref": "GetProductsListLambdaFunction"
               },
-              "CodeSha256": "4CkMjfCgcnqzrCQSMzZ3e3eN0xOnk1f/WKwD/Jz6uak="
+              "CodeSha256": "dNSbdFePn36igwQUaKo9hFMYJZONpWpppDfRnlkQv8M="
             }
           },
           "ApiGatewayRestApi": {
@@ -223,6 +223,51 @@
                 ]
               },
               "PathPart": "products",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodProductsOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProducts"
+              },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -259,7 +304,7 @@
                       ":lambda:path/2015-03-31/functions/",
                       {
                         "Fn::GetAtt": [
-                          "HelloLambdaFunction",
+                          "GetProductsListLambdaFunction",
                           "Arn"
                         ]
                       },
@@ -271,10 +316,10 @@
               "MethodResponses": []
             },
             "DependsOn": [
-              "HelloLambdaPermissionApiGateway"
+              "GetProductsListLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1630253007631": {
+          "ApiGatewayDeployment1630265988450": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -283,15 +328,16 @@
               "StageName": "dev"
             },
             "DependsOn": [
+              "ApiGatewayMethodProductsOptions",
               "ApiGatewayMethodProductsGet"
             ]
           },
-          "HelloLambdaPermissionApiGateway": {
+          "GetProductsListLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
               "FunctionName": {
                 "Fn::GetAtt": [
-                  "HelloLambdaFunction",
+                  "GetProductsListLambdaFunction",
                   "Arn"
                 ]
               },
@@ -333,13 +379,13 @@
               "Name": "sls-productservice-dev-ServerlessDeploymentBucketName"
             }
           },
-          "HelloLambdaFunctionQualifiedArn": {
+          "GetProductsListLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HelloLambdaVersionfP8TlW0cbqfU6QNoFTvgGY1x9Xcaajb0f7ir8hdg6ZY"
+              "Ref": "GetProductsListLambdaVersionWVfC98F2o16LTA8oggbBhhWcHsXIZGNKk0N67Rj5H8g"
             },
             "Export": {
-              "Name": "sls-productservice-dev-HelloLambdaFunctionQualifiedArn"
+              "Name": "sls-productservice-dev-GetProductsListLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -456,24 +502,43 @@
     },
     "pluginsData": {},
     "functions": {
-      "hello": {
-        "handler": "handler.hello",
+      "getProductsList": {
+        "handler": "handler.getProductsList",
         "events": [
           {
             "http": {
               "path": "products",
               "method": "get",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
               "integration": "AWS_PROXY"
             }
           }
         ],
-        "name": "productservice-dev-hello",
+        "name": "productservice-dev-getProductsList",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "HelloLambdaVersionfP8TlW0cbqfU6QNoFTvgGY1x9Xcaajb0f7ir8hdg6ZY"
+        "versionLogicalId": "GetProductsListLambdaVersionWVfC98F2o16LTA8oggbBhhWcHsXIZGNKk0N67Rj5H8g"
       }
     },
     "configValidationMode": "warn",
@@ -495,7 +560,7 @@
     "artifact": "/Users/admin/Documents/aws-be/productService/.serverless/productservice.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/productservice/dev/1630253009147-2021-08-29T16:03:29.147Z",
+    "artifactDirectoryName": "serverless/productservice/dev/1630265990331-2021-08-29T19:39:50.331Z",
     "artifact": "productservice.zip"
   }
 }
