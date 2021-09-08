@@ -71,7 +71,8 @@ const formatResponse = (body) => {
   var response = {
     "statusCode": 200,
     "headers": {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
     },
     "isBase64Encoded": false,
     "multiValueHeaders": {
@@ -87,7 +88,8 @@ var formatError = (error) => {
     "statusCode": error.statusCode,
     "headers": {
       "Content-Type": "text/plain",
-      "x-amzn-ErrorType": error.code
+      "x-amzn-ErrorType": error.code,
+      "Access-Control-Allow-Origin": "*",
     },
     "isBase64Encoded": false,
     "body": error.code + ": " + error.message
@@ -118,9 +120,7 @@ module.exports.getProductsById = async (event) => {
     const product = productList.find((list) => list.id === productId);
 
     if (!product) {
-      return successHandler({
-        message: "there is no productId found",
-      });
+      throw new Error("there is no productId found");
     }
 
     return successHandler(product);
